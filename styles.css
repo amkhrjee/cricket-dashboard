@@ -83,4 +83,16 @@
     fieldset>legend {
         font-weight: 900;
     }
+
+    .team_names_container {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        text-align: center;
+    }
+
+    button {
+        font-family: 'Inter';
+        font-weight: 600;
+    }
 }
