@@ -157,4 +157,8 @@
         display: flex;
         justify-content: space-between;
     }
+
+    .pre_match_details {
+        text-align: center;
+    }
 }
