@@ -51,6 +51,9 @@ $conn->close();
     </div>
     <form method="post" action="simulate_match.php" name="simulate" style="text-align: center;">
         <?php echo "<input name='match_id' type='hidden' value='$match_id'>" ?>
+        <?php echo "<input name='overs' type='hidden' value='$num_of_overs'>" ?>
+        <?php echo "<input name='team_one_id' type='hidden' value='$team_one_id'>" ?>
+        <?php echo "<input name='team_two_id' type='hidden' value='$team_two_id'>" ?>
         <button type="submit">Simulate Match 🤖</button>
     </form>
     <h3 style="text-align: center;">OR</h3>
