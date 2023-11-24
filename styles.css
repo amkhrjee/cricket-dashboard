@@ -95,4 +95,66 @@
         font-family: 'Inter';
         font-weight: 600;
     }
+
+    .match_stats_container {
+        padding: 1em;
+    }
+
+    .team_names_tabs_container {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        flex-direction: row;
+        font-weight: 800;
+    }
+
+    .team_tab {
+        background-color: grey;
+        text-align: center;
+        padding: 2em;
+        border-radius: 20px;
+        margin-right: 0.5em;
+        cursor: pointer;
+    }
+
+    .team_tab:hover {
+        border: black 0.1em dotted;
+    }
+
+    .match_stats_body {
+        background: black;
+        color: white;
+        padding: 0.2em;
+    }
+
+    .heading_container {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 600;
+    }
+
+    .main_stat {
+        flex: 2;
+    }
+
+    .stats_heading_group {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .player_stats {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .player_name {
+        flex: 2;
+    }
+
+    .stats_group {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+    }
 }
