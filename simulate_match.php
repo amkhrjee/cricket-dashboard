@@ -70,30 +70,32 @@ $batting_team_id = ($batting_team == $team_one_players) ? $team_one_id : $team_t
 
 $bowling_team_id = ($batting_team == $team_one_players) ? $team_two_id : $team_one_id;
 $bowling_team = ($batting_team == $team_one_players) ? $team_two_players : $team_one_players;
+
 // First Innings
-[$total_runs, $player_runs, $player_wickets, $player_balls_played, $player_overs_delivered] = simulate_innings($batting_team, $bowling_team, $overs);
+[$total_runs, $player_runs, $player_wickets, $player_balls_played, $player_overs_delivered, $player_runs_conceived] = simulate_innings($batting_team, $bowling_team, $overs);
+
 // Batting Team Batting Stats
 $batting_team_player_runs = $player_runs;
 $batting_team_player_balls_played = $player_balls_played;
+
 // Bowling Team Bowling Stats
 $bowling_team_player_wickets = $player_wickets;
+$bowling_team_runs_conceived = $player_runs_conceived;
 $bowling_team_players_overs_delivered = $player_overs_delivered;
 
+// Setting the target
 $target = $total_runs + 1;
 
 // Second Innings
-$player_runs = [];
-$player_wickets = [];
-$player_balls_played = [];
-$player_overs_delivered = [];
-
-[$total_runs, $player_runs, $player_wickets, $player_balls_played, $player_overs_delivered] = simulate_innings($bowling_team, $batting_team, $overs, $target);
+[$total_runs, $player_runs, $player_wickets, $player_balls_played, $player_overs_delivered, $player_runs_conceived] = simulate_innings($bowling_team, $batting_team, $overs, $target);
 
 // Bowling Team Batting Stats
 $bowling_team_player_runs = $player_runs;
 $bowling_team_player_balls_played = $player_balls_played;
+
 // Batting Team Bowling Stats
 $batting_team_player_wickets = $player_wickets;
+$batting_team_runs_conceived = $player_runs_conceived;
 $batting_team_players_overs_delivered = $player_overs_delivered;
 
 if ($total_runs > $target) {
@@ -111,15 +113,16 @@ function simulate_innings($batting_team_players, $bowling_team_players, $overs, 
     $player_runs = [];
     $player_wickets = [];
     $player_balls_played = [];
+    $player_runs_conceived = [];
     $player_overs_delivered = [];
 
     foreach ($batting_team_players as $player) {
         $player_runs[$player] = 0;
         $player_balls_played[$player] = 0;
     }
-    // var_dump($player_runs);
     foreach ($bowling_team_players as $player) {
         $player_wickets[$player] = 0;
+        $player_runs_conceived[$player] = 0;
         $player_overs_delivered[$player] = 0;
     }
     $batting_order = 0;
@@ -145,6 +148,7 @@ function simulate_innings($batting_team_players, $bowling_team_players, $overs, 
             $onstrike = ($run % 2 != 0) ? $batters[0] : $batters[1];
             $player_runs[$onstrike] += $run;
             $player_balls_played[$onstrike] += 1;
+            $player_runs_conceived[$bowler] += $run;
         } elseif ($wicket == 1) {
             $batting_order += 1;
             $index_of_batter = array_search($onstrike, $batters);
@@ -152,11 +156,10 @@ function simulate_innings($batting_team_players, $bowling_team_players, $overs, 
             $player_wickets[$bowler] += 1;
             $total_wickets += 1;
         }
-        // echo "$ball_num\t\t$run\t\t$wicket\t\t$onstrike\t\t$bowler<br>";
     }
     //TODO: Update player stats
 
-    return [$total_runs, $player_runs, $player_wickets, $player_balls_played, $player_overs_delivered];
+    return [$total_runs, $player_runs, $player_wickets, $player_balls_played, $player_overs_delivered, $player_runs_conceived];
 }
 
 function getTeamName($conn, $team_id)
@@ -229,9 +232,33 @@ function getTeamName($conn, $team_id)
                 <div class="stats_heading_group">
                     <span>O</span>
                     <span>R</span>
+                    <span>W</span>
                     <span>Econ.</span>
                 </div>
             </div>
+
+            <?php
+            $bowling_team_names = ($batting_team_id == $team_one_id) ? $team_two_id_name : $team_one_id_name;
+            foreach (array_slice($bowling_team, -6) as $player) {
+                $wickets = $bowling_team_player_wickets[$player];
+                $runs_conceived = $bowling_team_runs_conceived[$player];
+                $overs_bowled = $bowling_team_players_overs_delivered[$player];
+                $economy = ($overs_bowled != 0) ? ((int) ($runs_conceived / $overs_bowled)) : 0;
+
+                echo <<<EOT
+                <div class="player_stats">
+                <span class="player_name">$bowling_team_names[$player]</span>
+                <div class="stats_group">
+                    <span>$overs_bowled</span>
+                    <span>$runs_conceived</span>
+                    <span>$wickets</span>
+                    <span>$economy</span>
+                </div>
+                </div>
+                <br>
+                EOT;
+            }
+            ?>
         </div>
     </div>
 </body>
