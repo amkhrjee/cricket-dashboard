@@ -98,12 +98,14 @@ $batting_team_player_wickets = $player_wickets;
 $batting_team_runs_conceived = $player_runs_conceived;
 $batting_team_players_overs_delivered = $player_overs_delivered;
 
-if ($total_runs > $target) {
+if ($total_runs >= $target) {
     $winning_team = $bowling_team;
-} elseif ($total_runs == $target) {
+    $winning_team_name = $teams_id_name[$bowling_team_id];
+} elseif ($total_runs == ($target - 1)) {
     $winning_team = 0;
 } else {
     $winning_team = $batting_team;
+    $winning_team_name = $teams_id_name[$batting_team_id];
 }
 
 function simulate_innings($batting_team_players, $bowling_team_players, $overs, $target = 9999999)
@@ -184,6 +186,8 @@ function getTeamName($conn, $team_id)
             else echo "bowl" ?></h3>
 
     </div>
+    <h5 style="text-align: center;"><?php if ($winning_team == 0) echo "Match Tied";
+                                    else echo $winning_team_name . " won the match"; ?></h5>
     <div class="match_stats_container">
         <div class="team_names_tabs_container">
             <div id="batting_team_tab" class="team_tab"><?php echo "$teams_id_name[$batting_team_id]" ?></div>
