@@ -186,9 +186,10 @@ function getTeamName($conn, $team_id)
     </div>
     <div class="match_stats_container">
         <div class="team_names_tabs_container">
-            <div class="team_tab"><?php echo "$teams_id_name[$batting_team_id]" ?></div>
-            <div class="team_tab"><?php echo "$teams_id_name[$bowling_team_id]" ?></div>
+            <div id="batting_team_tab" class="team_tab"><?php echo "$teams_id_name[$batting_team_id]" ?></div>
+            <div id="bowling_team_tab" class="team_tab"><?php echo "$teams_id_name[$bowling_team_id]" ?></div>
         </div>
+        <!-- <div id="stats"></div> -->
         <div id="batting_team_stats" class="match_stats_body">
             <!-- Batting -->
             <div class="heading_container">
@@ -260,7 +261,105 @@ function getTeamName($conn, $team_id)
             }
             ?>
         </div>
+        <div id="bowling_team_stats" class="match_stats_body">
+            <!-- Batting -->
+            <div class="heading_container">
+                <span class="main_stat">Batting</span>
+                <div class="stats_heading_group">
+                    <span>R</span>
+                    <span>B</span>
+                    <span>SR</span>
+                </div>
+            </div>
+            <br>
+            <?php
+            $bowling_team_names = ($batting_team_id == $team_one_id) ? $team_two_id_name : $team_one_id_name;
+            foreach ($bowling_team as $player) {
+                $run = $bowling_team_player_runs[$player];
+                $balls_played = $bowling_team_player_balls_played[$player];
+                $sr =  ($run != 0) ? (int)(($run / $balls_played) * 100) : 0;
+                $bowling_team_player_sr[$player] = $sr;
+
+                echo <<<EOT
+                    <div class="player_stats">
+                    <span class="player_name">$bowling_team_names[$player]</span>
+                    <div class="stats_group">
+                        <span>$bowling_team_player_runs[$player]</span>
+                        <span>$bowling_team_player_balls_played[$player]</span>
+                        <span>$sr</span>
+                    </div>
+                </div>
+                <br>
+            EOT;
+            }
+            ?>
+            <div class="total_runs" style="display: flex; justify-content: space-between; font-weight: 800; border-bottom: white 0.1em dotted; margin-bottom: 0.2em;">
+                <span>Total Runs</span>
+                <span><?php echo $total_runs ?></span>
+            </div>
+
+            <!-- Bowling -->
+            <div class="heading_container">
+                <span class="main_stat">Bowling</span>
+                <div class="stats_heading_group">
+                    <span>O</span>
+                    <span>R</span>
+                    <span>W</span>
+                    <span>Econ.</span>
+                </div>
+            </div>
+
+            <?php
+            $batting_team_names = ($batting_team_id == $team_one_id) ? $team_one_id_name : $team_two_id_name;
+            foreach (array_slice($batting_team, -6) as $player) {
+                $wickets = $batting_team_player_wickets[$player];
+                $runs_conceived = $batting_team_runs_conceived[$player];
+                $overs_bowled = $batting_team_players_overs_delivered[$player];
+                $economy = ($overs_bowled != 0) ? ((int) ($runs_conceived / $overs_bowled)) : 0;
+
+                echo <<<EOT
+                <div class="player_stats">
+                <span class="player_name">$batting_team_names[$player]</span>
+                <div class="stats_group">
+                    <span>$overs_bowled</span>
+                    <span>$runs_conceived</span>
+                    <span>$wickets</span>
+                    <span>$economy</span>
+                </div>
+                </div>
+                <br>
+                EOT;
+            }
+            ?>
+        </div>
     </div>
 </body>
+<script>
+    let batting_team_tab = document.getElementById("batting_team_tab")
+    let bowling_team_tab = document.getElementById("bowling_team_tab")
+
+    let batting_team_stats = document.getElementById("batting_team_stats")
+    let bowling_team_stats = document.getElementById("bowling_team_stats")
+
+    // default behaviour
+    batting_team_stats.style.display = "none"
+    bowling_team_stats.style.display = "none"
+
+    batting_team_tab.onclick = () => {
+        batting_team_tab.style.backgroundColor = "black"
+        batting_team_tab.style.color = "white"
+        batting_team_stats.style.display = "block"
+        bowling_team_stats.style.display = "none"
+        bowling_team_tab.style.backgroundColor = "grey"
+    }
+
+    bowling_team_tab.onclick = () => {
+        bowling_team_tab.style.backgroundColor = "black"
+        bowling_team_tab.style.color = "white"
+        bowling_team_stats.style.display = "block"
+        batting_team_stats.style.display = "none"
+        batting_team_tab.style.backgroundColor = "grey"
+    }
+</script>
 
 </html>

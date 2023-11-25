@@ -97,12 +97,12 @@
     }
 
     .match_stats_container {
-        padding: 1em;
+        padding: 0.2em;
     }
 
     .team_names_tabs_container {
         display: flex;
-        justify-content: space-evenly;
+        justify-content: space-between;
         align-items: center;
         flex-direction: row;
         font-weight: 800;
@@ -110,21 +110,26 @@
 
     .team_tab {
         background-color: grey;
+        color: black;
         text-align: center;
         padding: 2em;
-        border-radius: 20px;
-        margin-right: 0.5em;
+        /* margin-right: em; */
         cursor: pointer;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
     }
 
     .team_tab:hover {
-        border: black 0.1em dotted;
+        background-color: teal;
     }
 
     .match_stats_body {
         background: black;
         color: white;
         padding: 0.2em;
+        position: relative;
     }
 
     .heading_container {
