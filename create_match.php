@@ -35,7 +35,7 @@ $conn->close();
             <div class="form_label_input_container">
                 <label>Team #1</label>
                 <select name="team_one">
-                    <option disabled selected value>Select a player</option>
+                    <option disabled selected value>Select a team</option>
                     <?php
                     $teams = [];
                     foreach ($results as $res) {
@@ -48,7 +48,7 @@ $conn->close();
             <div class="form_label_input_container">
                 <label>Team #2</label>
                 <select name="team_two">
-                    <option disabled selected value>Select a player</option>
+                    <option disabled selected value>Select a team</option>
                     <?php
                     foreach ($results as $res) {
                         echo "<option value='$res[0]'>$res[1]</option>";
@@ -58,7 +58,6 @@ $conn->close();
             </div>
             <?php
             $_SESSION['teams'] = $teams;
-            // echo "<input name='teams' type='hidden' value=" . serialize($teams) . ">";
             ?>
             <div style="text-align: center;margin: 1em;" class="btn_container">
                 <button style="font-size: large; font-family: 'Inter';" type="submit">Create</button>

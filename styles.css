@@ -94,6 +94,7 @@
     button {
         font-family: 'Inter';
         font-weight: 600;
+        font-size: 1.1em;
     }
 
     .match_stats_container {
