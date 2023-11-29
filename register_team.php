@@ -37,14 +37,14 @@
                 for ($i = 1; $i <= 11; $i++) {
                     echo "<div class='form_label_input_container'>";
                     echo "<label>$i</label>";
-                    echo "<select name='$i'>";
+                    echo "<select class='player_select' id='$i' name='$i'>";
                     echo "<option disabled selected value>Select a player</option>";
                     $player_names = [];
                     foreach ($resultList as $row) {
                         $id = $row[0];
                         $name = $row[1];
                         $player_names[] = $name;
-                        echo "<option value='$id'>" . htmlspecialchars($name) . "</option>";
+                        echo "<option class='player_option' value='$id'>" . htmlspecialchars($name) . "</option>";
                     }
                     echo "</select>";
                     echo "</div>";
@@ -52,6 +52,30 @@
                 $conn->close();
                 ?>
             </fieldset>
+            <script>
+                let selects = document.querySelectorAll(".player_select")
+
+                selects.forEach(select => {
+                    select.onchange = () => {
+                        if (select.value.length > 0) {
+                            updateOptions(select.id, select.value)
+                        }
+                    }
+                })
+
+                const updateOptions = (id, value) => {
+                    console.log("Selected value " + value);
+                    selects.forEach(select => {
+                        if (select.id != id) {
+                            for (option of select.options) {
+                                if (option.value == value) {
+                                    select.removeChild(option)
+                                }
+                            }
+                        }
+                    })
+                }
+            </script>
             <?php
             echo "<input type='hidden' name='player_names' value=" . serialize($player_names) . ">";
             ?>

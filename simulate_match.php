@@ -213,7 +213,6 @@ function simulate_innings(Team $batting_team, Team $bowling_team, int $overs, in
             </div>
             <br>
             <?php
-            // $batting_team_names = ($batting_team_id == $team_one_id) ? $team_one_id_name : $team_two_id_name;
             foreach ($batting_team->id_array as $player) {
                 $run = $batting_team->id_runs_scored_map[$player];
                 $balls_played = $batting_team->id_balls_played_map[$player];
@@ -251,7 +250,6 @@ function simulate_innings(Team $batting_team, Team $bowling_team, int $overs, in
             </div>
 
             <?php
-            // $bowling_team_names = ($batting_team_id == $team_one_id) ? $team_two_id_name : $team_one_id_name;
             foreach ($bowling_team->bowlers as $player) {
                 $wickets = $bowling_team->id_wickets_map[$player];
                 $runs_conceived = $bowling_team->id_runs_conceived_map[$player];
@@ -286,7 +284,6 @@ function simulate_innings(Team $batting_team, Team $bowling_team, int $overs, in
             </div>
             <br>
             <?php
-            // $bowling_team_names = ($batting_team_id == $team_one_id) ? $team_two_id_name : $team_one_id_name;
             foreach ($bowling_team->id_array as $player) {
                 $run = $bowling_team->id_runs_scored_map[$player];
                 $balls_played = $bowling_team->id_balls_played_map[$player];
@@ -324,7 +321,6 @@ function simulate_innings(Team $batting_team, Team $bowling_team, int $overs, in
             </div>
 
             <?php
-            // $batting_team_names = ($batting_team_id == $team_one_id) ? $team_one_id_name : $team_two_id_name;
             foreach ($batting_team->bowlers as $player) {
                 $wickets = $batting_team->id_wickets_map[$player];
                 $runs_conceived = $batting_team->id_runs_conceived_map[$player];
