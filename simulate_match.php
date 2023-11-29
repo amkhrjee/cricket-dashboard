@@ -60,11 +60,12 @@ class Team
         $conn->close();
     }
 }
+
 $overs = $_POST['overs'];
 $match_id = $_POST['match_id'];
 $team_one_id = $_POST['team_one_id'];
 $team_two_id = $_POST['team_two_id'];
-$match_id = ($team_one_id << 8) + $team_two_id;
+// $match_id = ($team_one_id << 8) + $team_two_id;
 
 $team_one = new Team($team_one_id);
 $team_two = new Team($team_two_id);
@@ -85,16 +86,19 @@ $target = $batting_team->total_runs + 1;
 // Second Innings
 simulate_innings($bowling_team, $batting_team, $overs, $target);
 
-if ($batting_team->total_runs >= $target) {
+$winning_team = null;
+if ($bowling_team->total_runs >= $target) {
     $winning_team = $bowling_team;
-} elseif ($batting_team->total_runs == ($target - 1)) {
-    $winning_team = 0;
-} else {
+} elseif ($bowling_team->total_runs < $target) {
     $winning_team = $batting_team;
 }
 
 function simulate_innings(Team $batting_team, Team $bowling_team, int $overs, int $target = 9999999)
 {
+    // Database Connection
+    require 'login.php';
+    $conn = new mysqli($hn, $un, $pw, $db);
+
     // Initial Variables
     $batting_order = 0;
     $total_wickets = 0;
@@ -133,46 +137,51 @@ function simulate_innings(Team $batting_team, Team $bowling_team, int $overs, in
         }
 
         // Updating the "match_summaries" table
-        // $match_summary_query = "INSERT INTO match_summaries (match_id, ball_num, run, wicket, batter, bowler) VALUES ($match_id, $ball_num, $run, $wicket, $onstrike, $bowler)";
+        // $match_summary_query = "INSERT INTO match_summaries 
+        // (match_id, ball_num, run, wicket, batter, bowler) 
+        // VALUES (global $match_id, $ball_num, $run, $wicket, $onstrike, $bowler)";
         // $res = $conn->query($match_summary_query);
         // if (!$res) $conn->error;
     }
-    // return [$total_runs, $player_runs, $player_wickets, $player_balls_played, $player_overs_delivered, $player_runs_conceived];
 }
 
-function updatePlayer($conn, $player_id, $runs_scored, $sr, $wickets_taken, $economy)
-{
-    $innings_query = "SELECT innings_played, max_run, avg_strike_rate, avg_economy FROM players WHERE id=$player_id";
-    $result = $conn->query($innings_query);
-    $result = $result->fetch_all();
-    $innings_played = $result[0][0];
-    $max_runs = $result[0][1];
-    $avg_strike_rate = $result[0][2];
-    $avg_economy = $result[0][3];
+// function updatePlayer($player_id, $runs_scored, $sr, $wickets_taken, $economy)
+// {
+//     // Database Connection
+//     require 'login.php';
+//     $conn = new mysqli($hn, $un, $pw, $db);
 
-    // Updating the values
-    $century = ($runs_scored >= 100) ? 1 : 0;
-    $half_century = ($runs_scored >= 50) ? 1 :  0;
-    $five_wickets = ($wickets_taken >= 5) ? 1 : 0;
-    $max_runs = ($max_runs > $runs_scored) ? $max_runs : $runs_scored;
-    $avg_economy = $avg_economy + (int)(($economy - $avg_economy) / ($innings_played + 1));
-    $avg_strike_rate = $avg_strike_rate + (int)(($sr - $avg_strike_rate) / ($innings_played + 1));
-    $innings_played += 1;
+//     $innings_query = "SELECT innings_played, max_run, avg_strike_rate, avg_economy FROM players WHERE id=$player_id";
+//     $result = $conn->query($innings_query);
+//     $result = $result->fetch_all();
+//     $innings_played = $result[0][0];
+//     $max_runs = $result[0][1];
+//     $avg_strike_rate = $result[0][2];
+//     $avg_economy = $result[0][3];
 
-    // Updating the "players" table
-    $player_query = "UPDATE players SET 
-    total_runs=total_runs+$runs_scored, 
-    innings_played=$innings_played, 
-    max_run=$max_runs, 
-    centuries=centuries+$century, 
-    half_centuries=half_centuries+$half_century, 
-    avg_strike_rate=$avg_strike_rate, 
-    avg_economy=$avg_economy, 
-    five_wickets=five_wickets+$five_wickets 
-    WHERE id=$player_id";
-    $res = $conn->query($player_query);
-    if (!$res) $conn->error;
-}
+//     // Updating the values
+//     $century = ($runs_scored >= 100) ? 1 : 0;
+//     $half_century = ($runs_scored >= 50) ? 1 :  0;
+//     $five_wickets = ($wickets_taken >= 5) ? 1 : 0;
+//     $max_runs = ($max_runs > $runs_scored) ? $max_runs : $runs_scored;
+//     $avg_economy = $avg_economy + (int)(($economy - $avg_economy) / ($innings_played + 1));
+//     $avg_strike_rate = $avg_strike_rate + (int)(($sr - $avg_strike_rate) / ($innings_played + 1));
+//     $innings_played += 1;
+
+//     // Updating the "players" table
+//     $player_query = "UPDATE players SET 
+//     total_runs=total_runs+$runs_scored, 
+//     innings_played=$innings_played, 
+//     max_run=$max_runs, 
+//     centuries=centuries+$century, 
+//     half_centuries=half_centuries+$half_century, 
+//     avg_strike_rate=$avg_strike_rate, 
+//     avg_economy=$avg_economy, 
+//     five_wickets=five_wickets+$five_wickets 
+//     WHERE id=$player_id";
+//     $res = $conn->query($player_query);
+//     if (!$res) $conn->error;
+// }
 ?>
 
 <body>
@@ -185,7 +194,7 @@ function updatePlayer($conn, $player_id, $runs_scored, $sr, $wickets_taken, $eco
             else echo "bowl" ?></h3>
 
     </div>
-    <h5 style="text-align: center;"><?php if ($winning_team == 0) echo "Match Tied";
+    <h5 style="text-align: center;"><?php if (!$winning_team) echo "Match Tied";
                                     else echo $winning_team->name . " won the match"; ?></h5>
     <div class="match_stats_container">
         <div class="team_names_tabs_container">
